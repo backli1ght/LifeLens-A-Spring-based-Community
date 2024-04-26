@@ -172,5 +172,45 @@ public class UserService implements CommunityConstant {
         return userMapper.updateHeader(userId, headerUrl);
     }
 
+    public Map<String, Object> updatePassword (int userId, String oldPassword, String newPassword, String confirmPassword) {
+        Map<String, Object> map = new HashMap<>();
+        if(StringUtils.isBlank(oldPassword)){
+            map.put("oldPasswordMsg","The original password cannot be null!");
+            return map;
+        }
+        if(StringUtils.isBlank(newPassword)){
+            map.put("newPasswordMsg","The new password cannot be null!");
+            return map;
+        }
 
+        if(StringUtils.isBlank(confirmPassword)){
+            map.put("confirmPasswordMsg","The confirmed password cannot be null!");
+            return map;
+        }
+
+        if(!confirmPassword.equals(newPassword)){
+            map.put("confirmPasswordMsg","The confirmed password is different from the new password!");
+            return map;
+        }
+        //验证账号
+//        User user=userMapper.selectByName(username);
+//        if(user==null){
+//            map.put("usernameMsg","该账号不存在！");
+//            return map;
+//        }
+
+        User user=userMapper.selectById(userId);
+
+        if(!user.getPassword().equals( CommunityUtil.md5(oldPassword+user.getSalt()))){
+            map.put("originPasswordMsg","The original password is incorrect!");
+            return map;
+        }
+
+        if(user.getPassword().equals(CommunityUtil.md5(newPassword+user.getSalt()))){
+            map.put("newPasswordMsg","The new password cannot be the same as the original password!");
+            return map;
+        }
+        userMapper.updatePassword(userId,CommunityUtil.md5(newPassword+user.getSalt()));
+        return map;
+    }
 }

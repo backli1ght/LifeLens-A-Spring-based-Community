@@ -2,6 +2,7 @@ package com.nowcoder.community.controller;
 
 import com.mysql.cj.log.Log;
 import com.nowcoder.community.annotation.LoginRequired;
+import com.nowcoder.community.dao.UserMapper;
 import com.nowcoder.community.entity.User;
 import com.nowcoder.community.service.UserService;
 import com.nowcoder.community.util.CommunityUtil;
@@ -23,6 +24,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/user")
@@ -44,6 +46,8 @@ public class UserController {
 
     @Autowired
     HostHolder hostHolder;
+    @Autowired
+    private UserMapper userMapper;
 
     @LoginRequired
     @RequestMapping(path = "/setting", method = RequestMethod.GET)
@@ -109,6 +113,22 @@ public class UserController {
             logger.error("Failed to get image: " + e.getMessage());
         }
 
+    }
+
+    @RequestMapping(path = "/updatePassword", method = RequestMethod.POST)
+    public String updatePassword(String oldPassword, String newPassword, String confirmPassword, Model model) {
+        User user = hostHolder.getUser();
+        Map<String, Object> map = userService.updatePassword(user.getId(), oldPassword, newPassword, confirmPassword);
+        if (map == null || map.isEmpty()) {
+            model.addAttribute("successMsg", "Password updated successfully.");
+            model.addAttribute("target", "/index");
+            return "/site/operate-result";
+        }else {
+            model.addAttribute("oldPasswordMsg", map.get("oldPasswordMsg"));
+            model.addAttribute("newPasswordMsg", map.get("newPasswordMsg"));
+            model.addAttribute("confirmPasswordMsg", map.get("confirmPasswordMsg"));
+            return "/site/setting";
+        }
     }
 
 }
