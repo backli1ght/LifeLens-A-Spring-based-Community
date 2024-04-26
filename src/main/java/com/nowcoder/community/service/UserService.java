@@ -1,12 +1,16 @@
 package com.nowcoder.community.service;
 
+import com.nowcoder.community.dao.LoginTicketMapper;
 import com.nowcoder.community.dao.UserMapper;
+import com.nowcoder.community.entity.LoginTicket;
 import com.nowcoder.community.entity.User;
 //import com.nowcoder.community.util.CommunityConstant;
 import com.nowcoder.community.util.CommunityConstant;
 import com.nowcoder.community.util.CommunityUtil;
 import com.nowcoder.community.util.MailClient;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -21,6 +25,7 @@ import java.util.Random;
 @Service
 public class UserService implements CommunityConstant {
 
+    private static final Logger log = LoggerFactory.getLogger(UserService.class);
     @Autowired
     private UserMapper userMapper;
 
@@ -35,6 +40,10 @@ public class UserService implements CommunityConstant {
 
     @Value("${server.servlet.context-path}")
     private String contextPath;
+
+    @Autowired
+    LoginTicketMapper loginTicketMapper;
+
 
     public User findUserById(int id) {
         return userMapper.selectById(id);
@@ -107,5 +116,61 @@ public class UserService implements CommunityConstant {
             return ACTIVATION_FAILURE;
         }
     }
+
+    public Map<String, Object> login (String username, String password, int expiredSeconds) {
+        Map<String , Object> map = new HashMap<>();
+
+        // handle null values
+        if (StringUtils.isBlank(username)) {
+            map.put("usernameMsg", "Password cannot be null!");
+        }
+        if (StringUtils.isBlank(password)) {
+            map.put("passwordMsg", "Password cannot be null!");
+        }
+
+        // verify username
+        User user = userMapper.selectByName(username);
+        if (user == null) {
+            map.put("usernameMsg", "Username does not exist!");
+            return map;
+        }
+
+        if (user.getStatus() == 0) {
+            map.put("usernameMsg", "Account has not been activated!");
+            return map;
+        }
+
+        // verify password
+        password = CommunityUtil.md5(password + user.getSalt());
+        if (!user.getPassword().equals(password)){
+            map.put("passwordMsg", "Password is incorrect!");
+            return map;
+        }
+
+        // generate login ticket
+        LoginTicket loginTicket = new LoginTicket();
+        loginTicket.setUserId(user.getId());
+        loginTicket.setTicket(CommunityUtil.generateUUID());
+        loginTicket.setStatus(0);
+        loginTicket.setExpired(new Date(System.currentTimeMillis() + expiredSeconds * 1000));
+        loginTicketMapper.insertLoginTicket(loginTicket);
+
+        map.put("ticket", loginTicket.getTicket());
+
+        return map;
+    }
+
+    public void logout (String ticket) {
+        loginTicketMapper.updateStatus(ticket, 1);
+    }
+
+    public LoginTicket findLoginTicket (String ticket) {
+        return loginTicketMapper.selectByTicket(ticket);
+    }
+
+    public int updateHeader (int userId, String headerUrl) {
+        return userMapper.updateHeader(userId, headerUrl);
+    }
+
 
 }

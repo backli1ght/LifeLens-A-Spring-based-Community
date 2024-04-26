@@ -6,11 +6,15 @@ public interface CommunityConstant {
      */
     int ACTIVATION_SUCCESS = 0;
 
-
     // repeat
     int ACTIVATION_REPEAT = 1;
 
     // fail
-
     int ACTIVATION_FAILURE = 2;
+
+    // default expiration time
+    int DEFAULT_EXPIRED_SECONDS = 3600 * 12;
+
+    // remember me expiration time
+    int REMEMBER_EXPIRED_SECONDS = 3600 * 24 * 100;
 }
