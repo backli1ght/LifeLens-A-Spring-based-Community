@@ -14,4 +14,6 @@ public interface DiscussPostMapper {
     // @Param notation is used to specify the parameter name in the SQL statement
     // If only one parameter is used, and it is used in <if>, @Param is essential
     int selectDiscussPostRows (@Param("userId") int userId);
+
+    int insertDiscussPost(DiscussPost discussPost);
 }
