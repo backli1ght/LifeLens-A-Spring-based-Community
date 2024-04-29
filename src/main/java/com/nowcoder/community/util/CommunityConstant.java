@@ -17,4 +17,14 @@ public interface CommunityConstant {
 
     // remember me expiration time
     int REMEMBER_EXPIRED_SECONDS = 3600 * 24 * 100;
+
+    /**
+     * entityType: discussPost
+     */
+    int ENTITY_TYPE_POST = 1;
+
+    /**
+     * entityType: comment
+     */
+    int ENTITY_TYPE_COMMENT = 2;
 }
