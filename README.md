@@ -32,4 +32,4 @@ Nowcoder 是一个社区平台，用户可以在平台上进行注册和登录�
 1. 克隆仓库到本地:
 
    ```bash
-   [git clone https://github.com/yourusername/nowcoder.git](https://github.com/backli1ght/nowcoder-community.git)
+   git clone https://github.com/yourusername/nowcoder.git
