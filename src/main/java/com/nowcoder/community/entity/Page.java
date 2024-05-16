@@ -1,17 +1,17 @@
 package com.nowcoder.community.entity;
 
 /**
- * seperate page information
+ * 封装分页相关的信息.
  */
 public class Page {
 
-    // current page
+    // 当前页码
     private int current = 1;
-    // display limit
+    // 显示上限
     private int limit = 10;
-    // total number of data (for calculating total pages)
+    // 数据总数(用于计算总页数)
     private int rows;
-    // query path (for reusing pagination links)
+    // 查询路径(用于复用分页链接)
     private String path;
 
     public int getCurrent() {
@@ -53,20 +53,22 @@ public class Page {
     }
 
     /**
-     * get the start row of current page
+     * 获取当前页的起始行
+     *
      * @return
      */
-    public int getOffset () {
-        // current page * display limit - display limit
+    public int getOffset() {
+        // current * limit - limit
         return (current - 1) * limit;
     }
 
     /**
-     * get total pages
+     * 获取总页数
+     *
      * @return
      */
-    public int getTotal () {
-        // total number of data / display limit
+    public int getTotal() {
+        // rows / limit [+1]
         if (rows % limit == 0) {
             return rows / limit;
         } else {
@@ -75,23 +77,24 @@ public class Page {
     }
 
     /**
-     * get start page
+     * 获取起始页码
+     *
      * @return
      */
-    public int getFrom () {
+    public int getFrom() {
         int from = current - 2;
         return from < 1 ? 1 : from;
     }
 
-
     /**
-     * get end page
+     * 获取结束页码
+     *
      * @return
      */
-
-    public int getTo () {
+    public int getTo() {
         int to = current + 2;
         int total = getTotal();
         return to > total ? total : to;
     }
+
 }

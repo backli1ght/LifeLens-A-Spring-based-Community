@@ -9,6 +9,7 @@ import com.nowcoder.community.util.CommunityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -54,13 +55,12 @@ public class AlphaService {
         return alphaDao.select();
     }
 
-    // REQUIRED: Support a current transaction, create a new one if none exists.
-    // REQUIRES_NEW: Execute non-transactionally, suspend the current transaction if one exists.
-    // NESTED: Execute within a nested transaction if a current transaction exists, behave like REQUIRED otherwise.
-
+    // REQUIRED: 支持当前事务(外部事务),如果不存在则创建新事务.
+    // REQUIRES_NEW: 创建一个新事务,并且暂停当前事务(外部事务).
+    // NESTED: 如果当前存在事务(外部事务),则嵌套在该事务中执行(独立的提交和回滚),否则就会REQUIRED一样.
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public Object save1() {
-        // add user
+        // 新增用户
         User user = new User();
         user.setUsername("alpha");
         user.setSalt(CommunityUtil.generateUUID().substring(0, 5));
@@ -70,28 +70,27 @@ public class AlphaService {
         user.setCreateTime(new Date());
         userMapper.insertUser(user);
 
-        // add post
+        // 新增帖子
         DiscussPost post = new DiscussPost();
         post.setUserId(user.getId());
         post.setTitle("Hello");
-        post.setContent("New user");
+        post.setContent("新人报道!");
         post.setCreateTime(new Date());
         discussPostMapper.insertDiscussPost(post);
 
         Integer.valueOf("abc");
 
-
         return "ok";
     }
 
-    public Object save2 () {
-        transactionTemplate.setIsolationLevel(TransactionTemplate.ISOLATION_READ_COMMITTED);
-        transactionTemplate.setPropagationBehavior(TransactionTemplate.PROPAGATION_REQUIRED);
+    public Object save2() {
+        transactionTemplate.setIsolationLevel(TransactionDefinition.ISOLATION_READ_COMMITTED);
+        transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
 
         return transactionTemplate.execute(new TransactionCallback<Object>() {
             @Override
             public Object doInTransaction(TransactionStatus status) {
-                // add user
+                // 新增用户
                 User user = new User();
                 user.setUsername("beta");
                 user.setSalt(CommunityUtil.generateUUID().substring(0, 5));
@@ -101,17 +100,19 @@ public class AlphaService {
                 user.setCreateTime(new Date());
                 userMapper.insertUser(user);
 
-                // add post
+                // 新增帖子
                 DiscussPost post = new DiscussPost();
                 post.setUserId(user.getId());
-                post.setTitle("Hello");
-                post.setContent("I AM A New user");
+                post.setTitle("你好");
+                post.setContent("我是新人!");
                 post.setCreateTime(new Date());
                 discussPostMapper.insertDiscussPost(post);
 
                 Integer.valueOf("abc");
+
                 return "ok";
             }
         });
     }
+
 }
