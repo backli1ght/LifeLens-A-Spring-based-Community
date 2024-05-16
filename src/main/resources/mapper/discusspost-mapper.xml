@@ -13,21 +13,21 @@
     </sql>
 
     <select id="selectDiscussPosts" resultType="DiscussPost">
-        select
-        <include refid="selectFields"></include>
-        FROM discuss_post
-        WHERE status != 2
-        <if test="userId != 0">
+        select <include refid="selectFields"></include>
+        from discuss_post
+        where status != 2
+        <if test="userId!=0">
             and user_id = #{userId}
         </if>
-        ORDER BY type DESC, create_time DESC
+        order by type desc, create_time desc
         limit #{offset}, #{limit}
     </select>
 
     <select id="selectDiscussPostRows" resultType="int">
-        select count(id) from discuss_post
+        select count(id)
+        from discuss_post
         where status != 2
-        <if test="userId != 0">
+        <if test="userId!=0">
             and user_id = #{userId}
         </if>
     </select>
@@ -38,9 +38,13 @@
     </insert>
 
     <select id="selectDiscussPostById" resultType="DiscussPost">
-        select
-        <include refid="selectFields"></include>
-        FROM discuss_post
+        select <include refid="selectFields"></include>
+        from discuss_post
         where id = #{id}
     </select>
+
+    <update id="updateCommentCount">
+        update discuss_post set comment_count = #{commentCount} where id = #{id}
+    </update>
+
 </mapper>

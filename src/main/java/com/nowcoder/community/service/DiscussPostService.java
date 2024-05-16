@@ -13,36 +13,40 @@ import java.util.List;
 public class DiscussPostService {
 
     @Autowired
-    private SensitiveFilter sensitiveFilter;
-
-    @Autowired
     private DiscussPostMapper discussPostMapper;
 
-    public List<DiscussPost> findDiscussPosts (int userId, int offset, int limit) {
+    @Autowired
+    private SensitiveFilter sensitiveFilter;
+
+    public List<DiscussPost> findDiscussPosts(int userId, int offset, int limit) {
         return discussPostMapper.selectDiscussPosts(userId, offset, limit);
     }
 
-    public int findDiscussPostRows (int userId) {
+    public int findDiscussPostRows(int userId) {
         return discussPostMapper.selectDiscussPostRows(userId);
     }
 
-    public int addDisscussPost (DiscussPost post){
+    public int addDiscussPost(DiscussPost post) {
         if (post == null) {
-            throw new IllegalArgumentException("Parameter cannot be null");
+            throw new IllegalArgumentException("参数不能为空!");
         }
 
-        // Escape the HTML tags in the title and content
+        // 转义HTML标记
         post.setTitle(HtmlUtils.htmlEscape(post.getTitle()));
         post.setContent(HtmlUtils.htmlEscape(post.getContent()));
-
-        // Filter the sensitive words in the title and content
+        // 过滤敏感词
         post.setTitle(sensitiveFilter.filter(post.getTitle()));
         post.setContent(sensitiveFilter.filter(post.getContent()));
 
         return discussPostMapper.insertDiscussPost(post);
     }
 
-    public DiscussPost findDiscussPostById (int id) {
+    public DiscussPost findDiscussPostById(int id) {
         return discussPostMapper.selectDiscussPostById(id);
     }
+
+    public int updateCommentCount(int id, int commentCount) {
+        return discussPostMapper.updateCommentCount(id, commentCount);
+    }
+
 }

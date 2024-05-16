@@ -146,18 +146,18 @@ public class AlphaController {
         return list;
     }
 
-    // cookie demo
+    // cookie示例
 
     @RequestMapping(path = "/cookie/set", method = RequestMethod.GET)
     @ResponseBody
     public String setCookie(HttpServletResponse response) {
-        // create cookie
+        // 创建cookie
         Cookie cookie = new Cookie("code", CommunityUtil.generateUUID());
-        // set cookie path
+        // 设置cookie生效的范围
         cookie.setPath("/community/alpha");
-        // set cookie life
+        // 设置cookie的生存时间
         cookie.setMaxAge(60 * 10);
-        // send cookie
+        // 发送cookie
         response.addCookie(cookie);
 
         return "set cookie";
@@ -166,18 +166,17 @@ public class AlphaController {
     @RequestMapping(path = "/cookie/get", method = RequestMethod.GET)
     @ResponseBody
     public String getCookie(@CookieValue("code") String code) {
-        // get cookie
         System.out.println(code);
-
         return "get cookie";
     }
 
-    // session demo
+    // session示例
+
     @RequestMapping(path = "/session/set", method = RequestMethod.GET)
     @ResponseBody
     public String setSession(HttpSession session) {
         session.setAttribute("id", 1);
-        session.setAttribute("name", "test");
+        session.setAttribute("name", "Test");
         return "set session";
     }
 
@@ -189,7 +188,7 @@ public class AlphaController {
         return "get session";
     }
 
-    // ajax demo
+    // ajax示例
     @RequestMapping(path = "/ajax", method = RequestMethod.POST)
     @ResponseBody
     public String testAjax(String name, int age) {
@@ -197,4 +196,5 @@ public class AlphaController {
         System.out.println(age);
         return CommunityUtil.getJSONString(0, "操作成功!");
     }
+
 }

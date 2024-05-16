@@ -4,8 +4,7 @@ import com.nowcoder.community.entity.User;
 import org.springframework.stereotype.Component;
 
 /**
- * 用于持有用户信息，代替session对象
- * 保存用户信息，保证线程隔离
+ * 持有用户信息,用于代替session对象.
  */
 @Component
 public class HostHolder {
