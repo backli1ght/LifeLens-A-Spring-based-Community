@@ -4,6 +4,7 @@ import com.mysql.cj.log.Log;
 import com.nowcoder.community.annotation.LoginRequired;
 import com.nowcoder.community.dao.UserMapper;
 import com.nowcoder.community.entity.User;
+import com.nowcoder.community.service.LikeService;
 import com.nowcoder.community.service.UserService;
 import com.nowcoder.community.util.CommunityUtil;
 import com.nowcoder.community.util.HostHolder;
@@ -46,8 +47,12 @@ public class UserController {
 
     @Autowired
     HostHolder hostHolder;
+
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private LikeService likeService;
 
     @LoginRequired
     @RequestMapping(path = "/setting", method = RequestMethod.GET)
@@ -129,6 +134,36 @@ public class UserController {
             model.addAttribute("confirmPasswordMsg", map.get("confirmPasswordMsg"));
             return "/site/setting";
         }
+    }
+
+    // 个人主页
+    @RequestMapping(path = "/profile/{userId}", method = RequestMethod.GET)
+    public String getProfilePage(@PathVariable("userId") int userId, Model model) {
+        User user = userService.findUserById(userId);
+        if (user == null) {
+            throw new RuntimeException("The user does not exist!");
+        }
+
+        // 用户
+        model.addAttribute("user", user);
+        // 点赞数量
+        int likeCount = likeService.findUserLikeCount(userId);
+        model.addAttribute("likeCount", likeCount);
+
+//        // 关注数量
+//        long followeeCount = followService.findFolloweeCount(userId, ENTITY_TYPE_USER);
+//        model.addAttribute("followeeCount", followeeCount);
+//        // 粉丝数量
+//        long followerCount = followService.findFollowerCount(ENTITY_TYPE_USER, userId);
+//        model.addAttribute("followerCount", followerCount);
+//        // 是否已关注
+//        boolean hasFollowed = false;
+//        if (hostHolder.getUser() != null) {
+//            hasFollowed = followService.hasFollowed(hostHolder.getUser().getId(), ENTITY_TYPE_USER, userId);
+//        }
+//        model.addAttribute("hasFollowed", hasFollowed);
+
+        return "/site/profile";
     }
 
 }
