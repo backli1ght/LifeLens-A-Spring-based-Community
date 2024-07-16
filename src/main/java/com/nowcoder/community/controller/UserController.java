@@ -1,8 +1,6 @@
 package com.nowcoder.community.controller;
 
-import com.mysql.cj.log.Log;
 import com.nowcoder.community.annotation.LoginRequired;
-import com.nowcoder.community.dao.UserMapper;
 import com.nowcoder.community.entity.User;
 import com.nowcoder.community.service.FollowService;
 import com.nowcoder.community.service.LikeService;
@@ -27,7 +25,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Map;
 
 @Controller
 @RequestMapping("/user")
@@ -45,13 +42,10 @@ public class UserController implements CommunityConstant {
     private String contextPath;
 
     @Autowired
-    UserService userService;
+    private UserService userService;
 
     @Autowired
-    HostHolder hostHolder;
-
-    @Autowired
-    private UserMapper userMapper;
+    private HostHolder hostHolder;
 
     @Autowired
     private LikeService likeService;
@@ -65,53 +59,52 @@ public class UserController implements CommunityConstant {
         return "/site/setting";
     }
 
-
-    // The method for uploading images should be POST
     @LoginRequired
     @RequestMapping(path = "/upload", method = RequestMethod.POST)
     public String uploadHeader(MultipartFile headerImage, Model model) {
         if (headerImage == null) {
-            model.addAttribute("error", "You must select an image to upload.");
+            model.addAttribute("error", "You have not chosen a file!");
             return "/site/setting";
         }
 
-        String filename = headerImage.getOriginalFilename();
-        String suffix = filename.substring(filename.lastIndexOf(".")); // get the file extension
+        String fileName = headerImage.getOriginalFilename();
+        String suffix = fileName.substring(fileName.lastIndexOf("."));
         if (StringUtils.isBlank(suffix)) {
-            model.addAttribute("error", "The file format is not supported.");
+            model.addAttribute("error", "The format of the image is not supported!");
             return "/site/setting";
         }
 
-        // Generate a random file name
-        filename = CommunityUtil.generateUUID() + suffix;
-
-        // Determine the destination path
-        File dest = new File(uploadPath + "/" + filename);
+        // 生成随机文件名
+        fileName = CommunityUtil.generateUUID() + suffix;
+        // 确定文件存放的路径
+        File dest = new File(uploadPath + "/" + fileName);
         try {
+            // 存储文件
             headerImage.transferTo(dest);
         } catch (IOException e) {
-            logger.error("Failed to upload file: " + e.getMessage());
-            throw new RuntimeException("Failed to upload file.", e);
+            logger.error("Fail to upload the file: " + e.getMessage());
+            throw new RuntimeException("Fail to upload the file, the server is down!", e);
         }
 
-        // Update the current user's headerUrl (web path)
+        // 更新当前用户的头像的路径(web访问路径)
         // http://localhost:8080/community/user/header/xxx.png
         User user = hostHolder.getUser();
-        String headerUrl = domain + contextPath + "/user/header/" + filename;
+        String headerUrl = domain + contextPath + "/user/header/" + fileName;
         userService.updateHeader(user.getId(), headerUrl);
+
         return "redirect:/index";
     }
 
-    @RequestMapping(path = "/header/{filename}", method = RequestMethod.GET)
-    public void getHeader(@PathVariable("filename") String filename, HttpServletResponse response) {
-        // the destination path in the server
-        filename = uploadPath + "/" + filename;
-        // get the file suffix
-        String suffix = filename.substring(filename.lastIndexOf("."));
-        // response image
+    @RequestMapping(path = "/header/{fileName}", method = RequestMethod.GET)
+    public void getHeader(@PathVariable("fileName") String fileName, HttpServletResponse response) {
+        // 服务器存放路径
+        fileName = uploadPath + "/" + fileName;
+        // 文件后缀
+        String suffix = fileName.substring(fileName.lastIndexOf("."));
+        // 响应图片
         response.setContentType("image/" + suffix);
         try (
-                FileInputStream fis = new FileInputStream(filename);
+                FileInputStream fis = new FileInputStream(fileName);
                 OutputStream os = response.getOutputStream();
         ) {
             byte[] buffer = new byte[1024];
@@ -120,24 +113,7 @@ public class UserController implements CommunityConstant {
                 os.write(buffer, 0, b);
             }
         } catch (IOException e) {
-            logger.error("Failed to get image: " + e.getMessage());
-        }
-
-    }
-
-    @RequestMapping(path = "/updatePassword", method = RequestMethod.POST)
-    public String updatePassword(String oldPassword, String newPassword, String confirmPassword, Model model) {
-        User user = hostHolder.getUser();
-        Map<String, Object> map = userService.updatePassword(user.getId(), oldPassword, newPassword, confirmPassword);
-        if (map == null || map.isEmpty()) {
-            model.addAttribute("successMsg", "Password updated successfully.");
-            model.addAttribute("target", "/index");
-            return "/site/operate-result";
-        }else {
-            model.addAttribute("oldPasswordMsg", map.get("oldPasswordMsg"));
-            model.addAttribute("newPasswordMsg", map.get("newPasswordMsg"));
-            model.addAttribute("confirmPasswordMsg", map.get("confirmPasswordMsg"));
-            return "/site/setting";
+            logger.error("Fail to load header: " + e.getMessage());
         }
     }
 
