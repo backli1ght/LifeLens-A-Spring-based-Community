@@ -67,14 +67,16 @@
 				<ul class="nav nav-tabs mb-3">
 					<li class="nav-item">
 						<a class="nav-link position-relative active" th:href="@{/letter/list}">
-							朋友私信<span class="badge badge-danger" th:text="${letterUnreadCount}" th:if="${letterUnreadCount!=0}">3</span>
+							Letters from friends<span class="badge badge-danger" th:text="${letterUnreadCount}" th:if="${letterUnreadCount!=0}">3</span>
 						</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link position-relative" href="notice.html">系统通知<span class="badge badge-danger">27</span></a>
+						<a class="nav-link position-relative" th:href="@{/notice/list}">
+							System notice<span class="badge badge-danger" th:text="${noticeUnreadCount}" th:if="${noticeUnreadCount!=0}">27</span>
+						</a>
 					</li>
 				</ul>
-				<button type="button" class="btn btn-primary btn-sm position-absolute rt-0" data-toggle="modal" data-target="#sendModal">发私信</button>
+				<button type="button" class="btn btn-primary btn-sm position-absolute rt-0" data-toggle="modal" data-target="#sendModal">Send a letter</button>
 			</div>
 			<!-- 弹出框 -->
 			<div class="modal fade" id="sendModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -134,7 +136,7 @@
 						<div>
 							<a th:href="@{|/letter/detail/${map.conversation.conversationId}|}" th:utext="${map.conversation.content}">米粉车, 你来吧!</a>
 							<ul class="d-inline font-size-12 float-right">
-								<li class="d-inline ml-2"><a href="#" class="text-primary">共<i th:text="${map.letterCount}">5</i>条会话</a></li>
+								<li class="d-inline ml-2"><a href="#" class="text-primary"><i th:text="${map.letterCount}">5</i> conversations in total</a></li>
 							</ul>
 						</div>
 					</div>
