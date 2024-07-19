@@ -32,7 +32,7 @@
         </if>
     </select>
 
-    <insert id="insertDiscussPost" parameterType="DiscussPost">
+    <insert id="insertDiscussPost" parameterType="DiscussPost" keyProperty="id">
         insert into discuss_post(<include refid="insertFields"></include>)
         values(#{userId},#{title},#{content},#{type},#{status},#{createTime},#{commentCount},#{score})
     </insert>
@@ -46,5 +46,17 @@
     
     <update id="updateCommentCount">
         update discuss_post set comment_count = #{commentCount} where id = #{id}
+    </update>
+
+    <update id="updateType">
+        update discuss_post set type = #{type} where id = #{id}
+    </update>
+
+    <update id="updateStatus">
+        update discuss_post set status = #{status} where id = #{id}
+    </update>
+
+    <update id="updateScore">
+        update discuss_post set score = #{score} where id = #{id}
     </update>
 </mapper>
