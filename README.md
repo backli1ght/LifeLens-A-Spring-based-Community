@@ -1,35 +1,35 @@
-# Nowcoder
+# LifeLens
 
-这个项目是一个基于SpringBoot开发的社区平台，旨在提供类似于牛客网2019年高级项目的功能。项目主要实现了用户注册与登录、发帖与评论等功能。
+This project is a community platform developed using Spring Boot, inspired by the advanced project of Nowcoder 2019. It mainly implements features such as user registration and login, posting, and commenting.
 
-## 项目简介
+## Project Overview
 
-Nowcoder 是一个社区平台，用户可以在平台上进行注册和登录，发布帖子，评论他人的帖子。项目的目标是为用户提供一个互动的社区平台。
+Nowcoder is a community platform where users can register, log in, create posts, and comment on others' posts. The goal of the project is to provide users with an interactive community platform.
 
-## 功能概述
+## Features
 
-- 用户注册与登录
-- 发表帖子
-- 评论帖子
+- User registration and login
+- Create posts
+- Comment on posts
 
 ## 技术栈
 
-- **后端**: SpringBoot
-- **数据库**: MySQL
-- **前端**: Thymeleaf, HTML, CSS, JavaScript
-- **其他**: Maven, Git
+- **Backend**: SpringBoot
+- **Database**: MySQL
+- **Frontend**: Thymeleaf, HTML, CSS, JavaScript
+- **Others**: Maven, Git, Docker
 
-## 安装与运行
+## Installation and Running
 
-### 前提条件
+### Prerequisites
 
-- JDK 1.8 或以上版本
-- Maven 3.6 或以上版本
-- MySQL 5.7 或以上版本
+- JDK 1.8 or above
+- Maven 3.6 or above
+- MySQL 5.7 or above
 
-### 步骤
+### Steps
 
-1. 克隆仓库到本地:
+1. Clone the repository locally:
 
    ```bash
    git clone git@github.com:backli1ght/nowcoder-community.git
