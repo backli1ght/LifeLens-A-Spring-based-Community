@@ -32,4 +32,4 @@ Nowcoder is a community platform where users can register, log in, create posts,
 1. Clone the repository locally:
 
    ```bash
-   git clone git@github.com:backli1ght/nowcoder-community.git
+   git clone [git@github.com:backli1ght/nowcoder-community.git](https://github.com/backli1ght/LifeLens-A-Spring-based-Community.git)
